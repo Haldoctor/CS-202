@@ -1,0 +1,91 @@
+# CS202 Theory Assignment 1
+12312109 李泓霖
+## Problem 1
+```
+slli x5, x28, 2      
+add  x5, x10, x5    # Get the address of A[i] 
+lw   x6, 0(x5)      # Get A[i]
+slli x7, x29, 2     
+add  x7, x10, x7    # Get the address of A[j]
+lw   x7, 0(x7)      # Get A[j]
+addi x7, x7, -5     # Get A[j] - 5
+sub  x8, x6, x7     # Get the result of A[i] - (A[j] - 5)
+sw   x8, 32(x11)    # Store the result into B[8]
+```
+
+## Problem 2
+### a
+The opcode position of the instruction is ` 0110011 `, so this is a R type instruction.
+So we can divide the instruction into format below
+```
+0000000 00001 00001 000     00001 0110011
+funct7   rs2   rs1  funct3    rd  opcode
+```
+According to the RISC-V Refernce, the instruction can be interpret to the following commands.
+```
+add rd , r1 , r2
+```
+Accurate to specific register
+```
+add x1 , x1 , x1
+```
+### b
+According to the problem, we translate each part first.
+1. Opcode: 0000011 (I type)
+2. funct3: 000    （lb）
+3. rs1: 11011
+4. rd: 00011
+5. imm: 111111111011
+So combined every part together, we get a RISC-V instruction
+11111111101111011000000110000011
+## Problem 3
+### a
+` beq x6, x0, DONE ` means when x6's value is equal to x0, which is 0, the circulation will end.
+` addi x6, x6, -1 ` means x6 equals to itself minus one. Considering the initial value of x6 is 10, that means the program will last for 10 loops.
+` addi x5, x5, 2 ` means x5 equals to itself plus five. Considering that x5 initial value is 0 and the whole procedure has 10 loops, the final value of x5 will be ` 0 + 10 * 2 = 20 `.
+So, the value of x5 is 20
+### b
+x5 = A, x6 = i
+So interpret the code into C is
+```C
+#include <stdio.h>
+
+int main() {
+    int A = 0;    // x5 initiallization
+    int i = 10;   // x6 initiallization
+    while (i != 0) { 
+        i--;       
+        A += 2;   
+    }
+    return 0;
+}
+```
+## Problem 4
+` g ` is a simple function, so we can interpret ` g ` first
+```
+g:
+    add a0, a0, a1    # a = a + b
+    ret               # return
+```
+` f ` is a little bit complex, in ` f ` we need to call ` g ` to complete its interpret.
+```
+f:
+    add t0, a2, a3    # c + d
+    call g            # call g first time
+    mv a1, t0         
+    call g            # call g second time
+    ret               # return the result
+```
+Combined two section together is:
+```
+f:
+    add t0, a2, a3    # c + d
+    call g            # call g first time
+    mv a1, t0         
+    call g            # call g second time
+    ret               # return the result
+
+g:
+    add a0, a0, a1    # a = a + b
+    ret               # return
+```
