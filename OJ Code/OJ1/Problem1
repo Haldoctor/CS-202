@@ -1,0 +1,13 @@
+.data
+sid: .space 1024
+.text
+main:
+li a7, 8 # to get a string
+la a0, sid
+li a1, 1025
+ecall
+li a7, 4 
+la a0, sid
+ecall
+li a7, 10
+ecall
